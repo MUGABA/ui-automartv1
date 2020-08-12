@@ -1,29 +1,36 @@
 import React from "react";
+// import { Redirect } from "react-router-dom";
+import Joi from "joi-browser";
 
-import TextInput from "./reUsableComponents/imputComponent";
-import Button from "./reUsableComponents/buttonComponent";
+import FormAttributes from "./reUsableComponents/formComponent";
 
-function LoginForm() {
-  return (
-    <div>
-      <h1>Login Here</h1>
-      <form action="">
-        <TextInput
-          type="email"
-          label="Email"
-          name="Email"
-          placeHolder="Enter email you used to sign up here"
-        />
-        <TextInput
-          type="password"
-          label="Password"
-          name="Password"
-          placeHolder="Enter password you used to sign up here"
-        />
-        <Button action="Login" />
-      </form>
-    </div>
-  );
+class LoginForm extends FormAttributes {
+  state = {
+    data: { email: "", password: "" },
+    errors: {},
+  };
+
+  schema = {
+    email: Joi.string().required().email().label("Email"),
+    password: Joi.string().required().label("Password"),
+  };
+  doSubmit() {
+    const { state } = this.props.location;
+    window.location = state ? state.from.pathname : "/";
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Login Here</h1>
+        <form onSubmit={this.handleSubmit}>
+          {this.renderTextInput("email", "Email")}
+          {this.renderTextInput("password", "Password", "password")}
+          {this.renderButton("Login")}
+        </form>
+      </div>
+    );
+  }
 }
 
 export default LoginForm;
